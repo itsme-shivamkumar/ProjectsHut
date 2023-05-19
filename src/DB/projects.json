@@ -673,20 +673,20 @@
     ]
   },
   {
-    "github_username": "goketech",
+    "github_username": "itsme-shivamkumar",
     "Social_media": {
-      "gitHub": "",
-      "LinkedIn": "",
-      "Instagram": "",
+      "gitHub": "https://github.com/itsme-shivamkumar",
+      "LinkedIn": "https://www.linkedin.com/in/shivam-kumar-9575a7227/",
+      "Instagram": "https://www.instagram.com/sherlock_shivam/",
       "YouTube": "",
       "Twitter": ""
     },
     "Projects": [
       {
-        "link": "https://movie-trailer-app-lake.vercel.app/",
-        "title": "Movie Trailer",
-        "description": "The movie-trailer app is a web application that allows users to search and view trailers for their favorite movies. The application is developed using React and integrated with the TMD and YouTube APIs to fetch movie trailers. The application has a responsive design that adapts to different screen sizes and features a search bar and filter option to help users navigate through the content.",
-        "tech": ["React", "CSS", "JavaScript", "HTML", "TMD API", "Youtube API"]
+        "link": "https://desume-chi.vercel.app/",
+        "title": "Desume | Resume Editor for Developers",
+        "description": "Desume Editor is a React-based web app that allows developers to edit their resumes with ease. With Desume Editor, developers can create or modify resumes with HTML and CSS directly in the app.",
+        "tech": ["React", "JavaScript", "Firebase", "HTML","CSS"]
       }
     ]
   }
