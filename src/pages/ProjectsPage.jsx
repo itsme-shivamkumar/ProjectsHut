@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { ProjectCard } from "../components"
 import projects from "../DB/projects.json"
 import techStack from "../utils/techStack"
@@ -10,7 +10,8 @@ const paginatedArr = paginate(projects)
 const ProjectsPage = () => {
   const [page, setPage] = useState(0)
   const [currentItems, setItems] = useState([])
-  const [selectedButton, setSelectedButton] = useState(null)
+  const selectedButton = useRef(Array(techStack.length).fill(-1))
+  const [buttonClick, setButtonClicked] = useState(false)
 
   // this useEffect is for when user click on pagination button then render only that page projects
   useEffect(() => {
@@ -21,28 +22,62 @@ const ProjectsPage = () => {
 
   // this useEffect is for when user clear the filter (double click) then render only that page projects
   useEffect(() => {
-    if (selectedButton === null) {
+    if (!isFilterSelected()) {
       setItems(paginatedArr[page])
       return
     }
-  }, [selectedButton])
+  }, [buttonClick])
 
   // this function will filter project based on selected technology and set the state of items
   const handleQuery = (index) => {
-    setSelectedButton((prev) => (prev === index ? null : index))
-    const regexPattern = new RegExp(techStack[index], "i")
+    setButtonClicked(true)
+
+    if (selectedButton.current[index] !== -1) {
+      selectedButton.current[index] = -1
+    } else {
+      selectedButton.current[index] = index
+    }
+
     let currProjects = []
     projects?.map((obj) => {
       let arr = obj["Projects"][0].tech
-      for (let i = 0; i < arr.length; i++) {
-        if (regexPattern.test(arr[i])) {
-          currProjects.push(obj)
-          break
+      let flag2 = true
+      for (let j = 0; j < techStack.length; j++) {
+        if (selectedButton.current[j] !== -1) {
+          const regexPattern = new RegExp(techStack[j], "i")
+          let flag1 = false
+          for (let i = 0; i < arr.length; i++) {
+            if (regexPattern.test(arr[i])) {
+              flag1 = true
+              break
+            }
+          }
+          if (flag1 === false) {
+            flag2 = false
+            break
+          }
         }
       }
+      if (flag2) currProjects.push(obj)
     })
     setItems(currProjects)
+    setTimeout(() => {
+      setButtonClicked(false)
+    }, 5)
   }
+
+  // this function will check if any filter for tech stack is selected or not
+  const isFilterSelected = () => {
+    let flag = false
+    for (let i = 0; i < techStack.length; i++) {
+      if (selectedButton.current[i] !== -1) {
+        flag = true
+        break
+      }
+    }
+    return flag
+  }
+
   const prevPage = () => {
     if (page - 1 < 0) {
       setPage(paginatedArr.length - 1)
@@ -76,10 +111,13 @@ const ProjectsPage = () => {
           <Button
             key={index}
             onClick={() => handleQuery(index)}
-            variant={selectedButton === index ? "contained" : "outlined"}
+            variant={selectedButton.current[index] !== -1 ? "contained" : "outlined"}
             className="bg-primary hover:bg-slate-200"
           >
-            <span className={selectedButton == index ? "text-white" : "text-primary"}> {tech.toLowerCase()}</span>
+            <span className={selectedButton.current[index] !== -1 ? "text-white" : "text-primary"}>
+              {" "}
+              {tech.toLowerCase()}
+            </span>
           </Button>
         ))}
       </div>
@@ -97,7 +135,7 @@ const ProjectsPage = () => {
       </section>
 
       {/* when user apply filter then show specific projects and hide prev and next page */}
-      {selectedButton === null && (
+      {isFilterSelected() || (
         <div className=" py-5 flex gap-2 flex-wrap justify-center text-black ">
           <button type="button" className="bg-white px-3 py-1 hover:bg-slate-200 rounded-md " onClick={prevPage}>
             Prev
